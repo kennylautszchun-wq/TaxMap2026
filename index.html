@@ -2,22 +2,79 @@
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 確保手機版不會自動放大，且高度對齊視窗 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>稅務地圖 - 2025/26 年度</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', "Microsoft JhengHei", sans-serif;
-            /* 將原本的 #f3f4f6 (淺灰) 改為深灰色背景 */
             background-color: #0a0a0a; 
+            /* 防止出現系統滾動條 */
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            /* 使用 dvh 確保喺有網址列嘅手機瀏覽器都係全螢幕 */
+            height: 100dvh; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        
+        #app {
+            /* 讓主容器佔滿螢幕，最大寬度維持 500px 以保證比例 */
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
         .card-bg {
-            /* 稍微調深卡片的背景，讓它與外圍背景有對比 */
             background-color: #121212; 
             position: relative;
             overflow: hidden;
+            /* 讓卡片填滿容器高度 */
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
         }
+
+        /* 內容區域設定為可滾動 */
+        #content-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            z-index: 20; /* 確保內容在觸控區之上 */
+        }
+
+        /* --- 左右觸控翻頁區域 --- */
+        .nav-zone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+            /* 點擊時會有微弱的反白效果提示 */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .nav-zone:active {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .nav-left {
+            left: 0;
+            width: 25%; /* 左邊 25% 係上一頁 */
+        }
+        .nav-right {
+            right: 0;
+            width: 25%; /* 右邊 25% 係下一頁 */
+        }
+        /* 中間 50% 留空，畀用家填表同點擊按鈕，唔會觸發翻頁 */
+
+
         .map-grid {
             position: absolute;
             inset: 0;
@@ -28,27 +85,14 @@
             pointer-events: none;
             transition: opacity 0.5s ease;
         }
-        .accent-orange {
-            color: #ff6b00;
-        }
-        .bg-accent-orange {
-            background-color: #ff6b00;
-        }
-        .accent-blue {
-            color: #3b82f6;
-        }
-        .bg-accent-blue {
-            background-color: #3b82f6;
-        }
-        .text-gray-custom {
-            color: #a1a1aa;
-        }
-        .border-gray-custom {
-            border-color: #333;
-        }
-        input::placeholder {
-            color: #4b5563;
-        }
+        .accent-orange { color: #ff6b00; }
+        .bg-accent-orange { background-color: #ff6b00; }
+        .accent-blue { color: #3b82f6; }
+        .bg-accent-blue { background-color: #3b82f6; }
+        .text-gray-custom { color: #a1a1aa; }
+        .border-gray-custom { border-color: #333; }
+        input::placeholder { color: #4b5563; }
+        
         select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ff6b00'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
@@ -56,27 +100,16 @@
             background-position: right 0.5rem center;
             background-size: 1.5em 1.5em;
         }
-        .page-transition {
-            transition: all 0.4s ease-in-out;
-        }
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 10px;
-        }
+        .page-transition { transition: all 0.4s ease-in-out; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         @keyframes pulse-blue {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.8; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .animate-pin {
-            animation: pulse-blue 2s infinite ease-in-out;
-        }
+        .animate-pin { animation: pulse-blue 2s infinite ease-in-out; }
         .new-badge {
             background: linear-gradient(90deg, #3b82f6, #60a5fa);
             padding: 2px 8px;
@@ -87,86 +120,90 @@
             text-transform: uppercase;
             margin-left: 8px;
         }
-        /* 隱藏原生 details 的箭頭 */
-        details > summary {
-            list-style: none;
-        }
-        details > summary::-webkit-details-marker {
-            display: none;
-        }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
 
     <!-- Main Container -->
-    <div id="app" class="relative w-full mx-auto" style="max-width: 500px;">
+    <div id="app">
         
-        <!-- Page Control -->
-        <div class="flex justify-between mb-4">
-            <button onclick="prevPage()" id="prev-btn" class="text-sm font-bold tracking-tighter hover:text-orange-500 transition-colors opacity-0 pointer-events-none">← PREVIOUS</button>
-            <button onclick="nextPage()" id="next-btn" class="text-sm font-bold tracking-tighter hover:text-orange-500 transition-colors">NEXT CHAPTER →</button>
+        <!-- 頂部導航指示 (保留作視覺提示，但點擊交由透明圖層處理) -->
+        <div class="flex justify-between items-center px-4 py-3 bg-[#0a0a0a] z-30">
+            <div id="prev-indicator" class="text-xs font-bold tracking-tighter text-gray-500 opacity-0 transition-opacity">← TAP LEFT</div>
+            <div id="next-indicator" class="text-xs font-bold tracking-tighter text-orange-500 animate-pulse">TAP RIGHT →</div>
         </div>
 
         <!-- Card Container -->
-        <!-- 同時加強了卡片的陰影邊框，讓它在黑背景下更突出 -->
-        <div class="card-bg text-white rounded-sm shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden page-transition border border-white/5">
+        <div class="card-bg text-white shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t border-white/5 relative">
             
             <!-- Map Grid Effect -->
             <div id="grid-bg" class="map-grid"></div>
 
-            <!-- Top Accent Bar -->
-            <div class="h-1.5 w-full bg-gray-800 flex relative z-10">
+            <!-- Top Accent Bar (Progress) -->
+            <div class="h-1.5 w-full bg-gray-800 flex relative z-10 shrink-0">
                 <div id="progress-bar" class="h-full bg-accent-orange transition-all duration-500" style="width: 25%;"></div>
             </div>
 
-            <!-- Card Content -->
-            <div class="p-8 md:p-12 min-h-[680px] flex flex-col justify-between relative z-10">
+            <!-- 隱形觸控翻頁區 (放喺 content-area 之後，用 z-index 控制) -->
+            <!-- 只有在不阻礙中間輸入框的情況下才能點擊 -->
+            <div class="nav-zone nav-left" onclick="prevPage()"></div>
+            <div class="nav-zone nav-right" onclick="nextPage()"></div>
+
+            <!-- Card Content (可滾動區域) -->
+            <div id="content-area" class="p-6 md:p-10 flex flex-col justify-between">
                 
-                <div id="content-area">
+                <div>
                     <!-- Page 01: Cover -->
-                    <div id="page-01" class="block">
-                        <header class="mt-12 relative">
+                    <div id="page-01" class="block animate-fade-in">
+                        <header class="mt-8 relative">
                             <p class="text-xs font-black italic accent-orange tracking-[0.5em] mb-4">2025/26 課稅年度</p>
                             
                             <div class="relative inline-block">
-                                <h1 class="text-7xl font-black italic tracking-tighter leading-[0.8] uppercase relative z-10">
+                                <h1 class="text-6xl md:text-7xl font-black italic tracking-tighter leading-[0.8] uppercase relative z-10">
                                     TAX<br><span class="accent-orange">MAP.</span>
                                 </h1>
-                                <div class="absolute -right-12 top-0 animate-pin">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <div class="absolute -right-8 top-0 animate-pin pointer-events-none">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 21C16 17 20 13.4183 20 9C20 4.58172 16.4183 1 12 1C7.58172 1 4 4.58172 4 9C4 13.4183 8 17 12 21Z" fill="#3b82f6" stroke="white" stroke-width="1.5"/>
                                         <circle cx="12" cy="9" r="3" fill="white"/>
                                     </svg>
                                 </div>
                             </div>
                             
-                            <h2 class="text-4xl font-black italic tracking-tighter mt-2 flex items-center gap-2">
+                            <h2 class="text-3xl md:text-4xl font-black italic tracking-tighter mt-4 flex items-center gap-2">
                                 稅務地圖<span class="accent-orange">.</span>
                                 <span class="new-badge">CURRENT</span>
                             </h2>
 
                             <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-600/10 blur-[60px] rounded-full pointer-events-none"></div>
                             
-                            <p class="mt-12 text-sm font-bold tracking-widest text-gray-custom uppercase border-l-2 border-orange-500 pl-4">
+                            <p class="mt-12 text-sm font-bold tracking-widest text-gray-custom uppercase border-l-2 border-orange-500 pl-4 leading-relaxed">
                                 現行年度導航：<br>全面掌握免稅額及扣稅攻略
                             </p>
                         </header>
-                        <div class="mt-16">
-                            <p class="text-[10px] font-black tracking-widest text-gray-600 uppercase">Scroll or Click Next to See Changes</p>
+                        
+                        <div class="mt-20 flex justify-center opacity-50 pointer-events-none">
+                             <!-- 指示動畫 -->
+                             <div class="flex gap-2 items-center text-[10px] font-black tracking-widest text-gray-400 uppercase">
+                                 <svg class="animate-bounce" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                 TAP RIGHT TO START
+                             </div>
                         </div>
                     </div>
 
                     <!-- Page 02: Allowances -->
                     <div id="page-02" class="hidden text-left">
-                        <header class="mb-8">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">02 / ALLOWANCES</p>
-                            <h1 class="text-5xl font-black italic tracking-tighter">免稅額地圖<span class="accent-orange">.</span></h1>
+                        <header class="mb-6">
+                            <p class="text-[10px] font-black italic accent-orange tracking-[0.3em] mb-1">02 / ALLOWANCES</p>
+                            <h1 class="text-4xl md:text-5xl font-black italic tracking-tighter">免稅額地圖<span class="accent-orange">.</span></h1>
                         </header>
 
-                        <div class="space-y-6">
+                        <div class="space-y-6 relative z-30 pointer-events-none"> <!-- 防止阻礙背景翻頁 -->
                             <div>
                                 <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 border-b border-orange-900/50 pb-1">現行免稅額一覽</p>
-                                <div class="grid grid-cols-1 gap-4">
+                                <div class="grid grid-cols-1 gap-3">
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-black italic">基本免稅額</span>
                                         <span class="text-lg font-black">$132,000</span>
@@ -182,11 +219,11 @@
                                 </div>
                             </div>
 
-                            <div class="mt-8">
+                            <div class="mt-6">
                                 <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 border-b border-orange-900/50 pb-1">Deductions 扣除額</p>
-                                <div class="grid grid-cols-1 gap-4">
+                                <div class="grid grid-cols-1 gap-3">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm font-black italic">居所貸款 / 住宅租金扣除</span>
+                                        <span class="text-sm font-black italic">居所貸款 / 租金扣除</span>
                                         <span class="text-lg font-black">$100,000</span>
                                     </div>
                                     <div class="flex justify-between items-center">
@@ -204,118 +241,100 @@
 
                     <!-- Page 03: PRO Calculator -->
                     <div id="page-03" class="hidden">
-                        <header class="mb-4 flex justify-between items-end">
-                            <div>
-                                <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-1">03 / PRO ENGINE</p>
-                                <h1 class="text-4xl font-black italic tracking-tighter">專業稅務計算機<span class="accent-orange">.</span></h1>
-                            </div>
+                        <header class="mb-4">
+                            <p class="text-[10px] font-black italic accent-orange tracking-[0.3em] mb-1">03 / PRO ENGINE</p>
+                            <h1 class="text-3xl md:text-4xl font-black italic tracking-tighter">專業稅務計算機<span class="accent-orange">.</span></h1>
                         </header>
                         
-                        <!-- 計算機主體 -->
-                        <div class="space-y-3 max-h-[460px] overflow-y-auto pr-2 custom-scroll pb-4">
+                        <!-- 計算機主體：確保 z-index 高於觸控區，令中間的按鈕和輸入框可以正常使用 -->
+                        <div class="space-y-3 pb-4 relative z-40 custom-scroll">
                             
                             <!-- 1. 基本資料 -->
                             <div class="p-3 bg-white/5 border border-gray-700 rounded-sm">
                                 <div class="grid grid-cols-2 gap-3">
                                     <div class="col-span-2">
-                                        <label class="text-[10px] font-bold text-gray-custom tracking-widest uppercase mb-1 block">Annual Income 總年薪/入息</label>
-                                        <input type="number" id="income" placeholder="例如: 600000" class="w-full bg-black/40 border border-gray-600 p-2 rounded-sm text-lg font-black focus:border-orange-500 transition-colors outline-none text-white">
+                                        <label class="text-[10px] font-bold text-gray-custom tracking-widest uppercase mb-1 block">Annual Income 總年入息</label>
+                                        <input type="number" id="income" placeholder="例如: 600000" class="w-full bg-black/60 border border-gray-600 p-2.5 rounded-sm text-lg font-black focus:border-orange-500 transition-colors outline-none text-white">
                                     </div>
                                     <div>
                                         <label class="text-[10px] font-bold text-gray-custom uppercase mb-1 block">婚姻狀況</label>
-                                        <select id="maritalStatus" class="w-full bg-black/40 border border-gray-600 p-2 rounded-sm font-bold text-xs focus:border-orange-500 outline-none text-white">
-                                            <option value="single">單身 / 未婚</option>
-                                            <option value="married">已婚 (合併計算)</option>
+                                        <select id="maritalStatus" class="w-full bg-black/60 border border-gray-600 p-2.5 rounded-sm font-bold text-xs focus:border-orange-500 outline-none text-white">
+                                            <option value="single">單身</option>
+                                            <option value="married">已婚</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label class="text-[10px] font-bold text-gray-custom uppercase mb-1 block">單親免稅額</label>
-                                        <select id="singleParent" class="w-full bg-black/40 border border-gray-600 p-2 rounded-sm font-bold text-xs focus:border-orange-500 outline-none text-white">
+                                        <select id="singleParent" class="w-full bg-black/60 border border-gray-600 p-2.5 rounded-sm font-bold text-xs focus:border-orange-500 outline-none text-white">
                                             <option value="0">否</option>
-                                            <option value="1">是 (需撫養子女)</option>
+                                            <option value="1">是</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 2. 家庭成員免稅額 (摺疊選單) -->
+                            <!-- 2. 家庭成員免稅額 (摺疊) -->
                             <details class="group bg-white/5 border border-gray-800 rounded-sm">
-                                <summary class="p-3 cursor-pointer flex justify-between items-center font-bold text-xs accent-orange uppercase tracking-widest outline-none">
-                                    ▼ 進階免稅額 (子女及父母)
-                                    <span class="text-[10px] text-gray-500 group-open:hidden">點擊展開</span>
+                                <summary class="p-3 cursor-pointer flex justify-between items-center font-bold text-[11px] accent-orange uppercase tracking-widest outline-none">
+                                    ▼ 進階免稅額 (子女/父母)
+                                    <span class="text-[9px] text-gray-500 group-open:hidden">展開</span>
                                 </summary>
                                 <div class="p-3 pt-0 border-t border-gray-800 mt-2 space-y-3">
-                                    <div class="grid grid-cols-2 gap-3">
+                                    <div class="grid grid-cols-2 gap-2">
                                         <div>
-                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">子女數目 ($130k)</label>
-                                            <input type="number" id="childCount" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                            <label class="text-[9px] font-bold text-gray-400 block mb-1">子女 ($130k)</label>
+                                            <input type="number" id="childCount" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-2 rounded-sm font-bold text-sm outline-none">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">今年出生嬰兒 (額外$130k)</label>
-                                            <input type="number" id="newbornCount" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                            <label class="text-[9px] font-bold text-gray-400 block mb-1">初生嬰 (外加$130k)</label>
+                                            <input type="number" id="newbornCount" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-2 rounded-sm font-bold text-sm outline-none">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 60歲+ (同住 $100k)</label>
-                                            <input type="number" id="p60T" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                            <label class="text-[9px] font-bold text-gray-400 block mb-1">父母60+ (同住)</label>
+                                            <input type="number" id="p60T" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-2 rounded-sm font-bold text-sm outline-none">
                                         </div>
                                         <div>
-                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 60歲+ (非同住 $50k)</label>
-                                            <input type="number" id="p60N" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 55-59歲 (同住 $50k)</label>
-                                            <input type="number" id="p55T" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
-                                        </div>
-                                        <div>
-                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 55-59歲 (非同住 $25k)</label>
-                                            <input type="number" id="p55N" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                            <label class="text-[9px] font-bold text-gray-400 block mb-1">父母60+ (非同住)</label>
+                                            <input type="number" id="p60N" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-2 rounded-sm font-bold text-sm outline-none">
                                         </div>
                                     </div>
                                 </div>
                             </details>
 
-                            <!-- 3. 扣除額 (摺疊選單) -->
+                            <!-- 3. 扣除額 (摺疊) -->
                             <details class="group bg-white/5 border border-gray-800 rounded-sm" open>
-                                <summary class="p-3 cursor-pointer flex justify-between items-center font-bold text-xs accent-orange uppercase tracking-widest outline-none">
-                                    ▼ 扣稅項目 (保險、房屋、強積金)
+                                <summary class="p-3 cursor-pointer flex justify-between items-center font-bold text-[11px] accent-orange uppercase tracking-widest outline-none">
+                                    ▼ 扣稅項目 (保險/房屋)
                                 </summary>
                                 <div class="p-3 pt-0 border-t border-gray-800 mt-2 space-y-2">
                                     <div class="flex justify-between items-center">
                                         <label class="text-[10px] font-bold text-gray-custom uppercase">強積金 MPF (上限18k)</label>
-                                        <input type="number" id="mpf" value="18000" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                        <input type="number" id="mpf" value="18000" class="w-24 bg-black/60 border border-gray-700 p-1.5 rounded-sm text-right font-bold focus:border-orange-500 outline-none">
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">合資格延期年金 / TVC</label>
-                                        <input type="number" id="qdap" placeholder="上限 60k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">延期年金/TVC</label>
+                                        <input type="number" id="qdap" placeholder="Max 60k" class="w-24 bg-black/60 border border-gray-700 p-1.5 rounded-sm text-right font-bold focus:border-orange-500 outline-none">
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">自願醫保 VHIS (總保費)</label>
-                                        <input type="number" id="vhis" placeholder="每名親屬上限 8k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">自願醫保 VHIS</label>
+                                        <input type="number" id="vhis" placeholder="Max 8k/人" class="w-24 bg-black/60 border border-gray-700 p-1.5 rounded-sm text-right font-bold focus:border-orange-500 outline-none">
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">住宅租金 / 樓宇按揭利息</label>
-                                        <input type="number" id="housing" placeholder="上限 100k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">個人進修開支</label>
-                                        <input type="number" id="education" placeholder="上限 100k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">租金/按揭利息</label>
+                                        <input type="number" id="housing" placeholder="Max 100k" class="w-24 bg-black/60 border border-gray-700 p-1.5 rounded-sm text-right font-bold focus:border-orange-500 outline-none">
                                     </div>
                                 </div>
                             </details>
 
                             <!-- 計算按鈕 -->
-                            <button onclick="calculateProTax()" class="w-full bg-accent-orange py-3 mt-2 font-black italic text-lg hover:bg-orange-600 transition-all uppercase tracking-tighter shadow-lg shadow-orange-500/20">開始專業運算</button>
+                            <button onclick="calculateProTax()" class="w-full bg-accent-orange py-3.5 mt-2 font-black italic text-lg hover:bg-orange-600 transition-all uppercase tracking-tighter shadow-lg shadow-orange-500/20 rounded-sm active:scale-95">計算結果</button>
                             
                             <!-- 結果展示 -->
-                            <div id="result-box" class="mt-4 p-4 bg-gradient-to-br from-white/10 to-transparent border border-orange-500/40 rounded-sm hidden animate-pulse relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-2 opacity-10">
-                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                                </div>
+                            <div id="result-box" class="mt-4 p-4 bg-gradient-to-br from-white/10 to-transparent border border-orange-500/40 rounded-sm hidden relative overflow-hidden">
+                                <p class="text-[10px] font-bold text-gray-300 tracking-widest uppercase mb-1">Estimated Tax 應繳稅款</p>
+                                <p id="tax-result" class="text-4xl md:text-5xl font-black accent-orange italic drop-shadow-md">$0</p>
                                 
-                                <p class="text-[10px] font-bold text-gray-300 tracking-widest uppercase mb-1">Final Tax Payable 應繳稅款總額</p>
-                                <p id="tax-result" class="text-5xl font-black accent-orange italic drop-shadow-md">$0</p>
-                                
-                                <div class="mt-4 grid grid-cols-2 gap-3 border-t border-gray-700 pt-3">
+                                <div class="mt-3 grid grid-cols-2 gap-2 border-t border-gray-700 pt-2">
                                     <div>
                                         <p class="text-[9px] font-bold text-gray-500 uppercase">總免稅額</p>
                                         <p id="total-allowance-val" class="text-sm font-black text-gray-200">$0</p>
@@ -324,110 +343,122 @@
                                         <p class="text-[9px] font-bold text-gray-500 uppercase">總扣除額</p>
                                         <p id="total-deduction-val" class="text-sm font-black text-gray-200">$0</p>
                                     </div>
-                                    <div class="col-span-2">
-                                        <p class="text-[9px] font-bold text-gray-500 uppercase">應課稅入息實額 (Net Chargeable Income)</p>
-                                        <p id="nci-val" class="text-sm font-black text-gray-200">$0</p>
-                                    </div>
-                                </div>
-                                <div class="mt-3 bg-blue-900/30 border border-blue-500/30 p-2 rounded text-[9px] text-blue-200 flex items-center justify-between">
-                                    <span id="tax-method" class="font-bold">採用累進稅率計算</span>
-                                    <span class="italic">已扣減 $3,000 寬免額</span>
                                 </div>
                             </div>
+
+                            <!-- Gemini AI 區塊 -->
+                            <div id="ai-tips-container" class="mt-3 hidden">
+                                <button onclick="generateAITips()" id="ai-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 py-3 font-black italic text-sm hover:from-indigo-500 hover:to-purple-500 transition-all uppercase tracking-tighter shadow-lg shadow-purple-500/20 rounded-sm flex items-center justify-center gap-2 active:scale-95">
+                                    ✨ 顯示隱藏慳稅位
+                                </button>
+                                
+                                <div id="ai-result-box" class="mt-2 p-3 bg-indigo-900/30 border border-indigo-500/30 rounded-sm hidden relative">
+                                    <p class="text-[10px] font-bold text-indigo-400 tracking-widest uppercase mb-1 flex items-center gap-1">AI 慳稅分析</p>
+                                    <div id="ai-text" class="text-[11px] text-indigo-50 leading-relaxed font-medium"></div>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
 
                     <!-- Page 04: Call to Action -->
                     <div id="page-04" class="hidden">
-                        <header class="mb-6">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">04 / THE DESTINATION</p>
-                            <h1 class="text-5xl font-black italic tracking-tighter leading-tight">領取懶人包<span class="accent-orange">.</span></h1>
+                        <header class="mb-4">
+                            <p class="text-[10px] font-black italic accent-orange tracking-[0.3em] mb-1">04 / THE DESTINATION</p>
+                            <h1 class="text-4xl md:text-5xl font-black italic tracking-tighter leading-tight">領取懶人包<span class="accent-orange">.</span></h1>
                         </header>
 
-                        <div class="space-y-6">
+                        <div class="space-y-5 relative z-40"> <!-- 確保表單可以點擊 -->
                             <div class="bg-accent-blue/10 p-4 border-l-4 border-accent-blue rounded-sm">
-                                <p class="text-sm font-bold italic text-white mb-2 underline decoration-blue-500 underline-offset-4">2025/26 扣稅懶人包</p>
+                                <p class="text-sm font-bold italic text-white mb-1 underline decoration-blue-500 underline-offset-4">2025/26 扣稅懶人包</p>
                                 <p class="text-xs text-gray-300 leading-relaxed">
-                                    想知道如何善用各項扣稅額（如合資格延期年金 QDAP、自願醫保 VHIS 等）？留下 WhatsApp，系統會即時發送「2025/26 扣稅懶人包」給你參考，助你輕鬆了解各項扣稅細節！
+                                    想知道如何善用各項扣稅額？留下 WhatsApp，系統會即時發送「2025/26 扣稅懶人包」給你參考。
                                 </p>
                             </div>
 
-                            <div class="space-y-3 mt-8">
-                                <div class="relative">
-                                    <input type="text" id="cta-name" placeholder="你的姓名 / Name" class="w-full bg-white/5 border border-gray-700 p-3 rounded-sm text-sm font-bold focus:border-blue-500 outline-none transition-all">
-                                </div>
-                                <div class="relative">
-                                    <input type="tel" id="cta-phone" placeholder="WhatsApp 號碼 (例: 91234567)" class="w-full bg-white/5 border border-gray-700 p-3 rounded-sm text-sm font-bold focus:border-green-500 outline-none transition-all">
-                                </div>
+                            <div class="space-y-3 mt-4">
+                                <input type="text" id="cta-name" placeholder="你的姓名 / Name" class="w-full bg-black/60 border border-gray-600 p-3.5 rounded-sm text-sm font-bold focus:border-blue-500 outline-none text-white transition-colors">
                                 
-                                <button onclick="handleExcelRequest()" id="cta-btn" class="w-full bg-accent-blue py-4 mt-2 font-black italic text-lg hover:bg-blue-600 transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] uppercase tracking-tighter flex items-center justify-center gap-3">
+                                <input type="tel" id="cta-phone" placeholder="WhatsApp 號碼 (例: 91234567)" class="w-full bg-black/60 border border-gray-600 p-3.5 rounded-sm text-sm font-bold focus:border-green-500 outline-none text-white transition-colors">
+                                
+                                <button onclick="handleExcelRequest()" id="cta-btn" class="w-full bg-accent-blue py-4 mt-2 font-black italic text-lg hover:bg-blue-600 transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] uppercase tracking-tighter flex items-center justify-center gap-3 rounded-sm active:scale-95">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     立刻領取懶人包
                                 </button>
                                 
-                                <p class="text-[9px] text-center text-gray-500 uppercase tracking-widest mt-4 italic leading-relaxed">
-                                    * 您的資料絕對保密，僅用於發送懶人包及相關資訊。<br>本人為理財顧問，本專頁內容絕不構成專業稅務建議。
+                                <p class="text-[9px] text-center text-gray-500 uppercase tracking-widest mt-2 italic leading-relaxed pointer-events-none">
+                                    * 僅用於發送懶人包。<br>本專頁內容絕不構成專業稅務建議。
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer (已收窄) -->
-                <footer class="mt-auto pt-5 border-t border-gray-custom flex justify-between items-center bg-white/5 -mx-8 -mb-8 px-8 py-4 md:-mx-12 md:-mb-12 md:px-12 md:py-5">
-                    <div>
-                        <p class="text-[10px] font-black tracking-[0.2em] italic uppercase">Tax Map 2025/26</p>
-                        <p class="text-[10px] font-bold text-gray-custom tracking-widest uppercase">Authored by Klau</p>
-                    </div>
-                    <div class="text-3xl font-black italic" id="page-number">01</div>
-                </footer>
-
             </div>
+
+            <!-- Footer (固定於底部) -->
+            <footer class="mt-auto border-t border-gray-custom flex justify-between items-center bg-black/40 px-6 py-3 shrink-0 pointer-events-none relative z-30">
+                <div>
+                    <p class="text-[9px] font-black tracking-[0.2em] italic uppercase">Tax Map</p>
+                    <p class="text-[9px] font-bold text-gray-custom tracking-widest uppercase">By Klau</p>
+                </div>
+                <div class="text-2xl font-black italic text-gray-400" id="page-number">01</div>
+            </footer>
+
         </div>
     </div>
 
     <script>
         let currentPage = 1;
         const totalPages = 4;
+        
+        // Gemini API 金鑰
+        const apiKey = "";
+        let latestTaxData = null; 
 
         function updateUI() {
+            // 隱藏所有頁面
             for (let i = 1; i <= totalPages; i++) {
                 document.getElementById(`page-0${i}`).classList.add('hidden');
+                document.getElementById(`page-0${i}`).classList.remove('animate-fade-in');
             }
-            document.getElementById(`page-0${currentPage}`).classList.remove('hidden');
+            
+            // 顯示當前頁面並加入淡入動畫
+            const activePage = document.getElementById(`page-0${currentPage}`);
+            activePage.classList.remove('hidden');
+            void activePage.offsetWidth; // Trigger reflow
+            activePage.classList.add('animate-fade-in');
+            
             document.getElementById('page-number').innerText = `0${currentPage}`;
             
-            document.getElementById('grid-bg').style.opacity = (currentPage === 1 || currentPage === 4) ? '1' : '0.3';
-
+            // 更新進度條
             const progress = (currentPage / totalPages) * 100;
             document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
+            // 更新頂部指示文字
+            const prevInd = document.getElementById('prev-indicator');
+            const nextInd = document.getElementById('next-indicator');
 
             if (currentPage === 1) {
-                prevBtn.classList.add('opacity-0', 'pointer-events-none');
+                prevInd.classList.add('opacity-0');
             } else {
-                prevBtn.classList.remove('opacity-0', 'pointer-events-none');
+                prevInd.classList.remove('opacity-0');
             }
 
             if (currentPage === totalPages) {
-                nextBtn.innerText = 'GO TO START';
-                nextBtn.classList.add('accent-blue');
-                nextBtn.classList.remove('accent-orange');
+                nextInd.innerText = "DONE";
+                nextInd.classList.remove('text-orange-500', 'animate-pulse');
+                nextInd.classList.add('text-gray-600');
             } else {
-                nextBtn.innerText = 'NEXT CHAPTER →';
-                nextBtn.classList.remove('accent-blue');
-                nextBtn.classList.add('accent-orange');
+                nextInd.innerText = "TAP RIGHT →";
+                nextInd.classList.add('text-orange-500', 'animate-pulse');
+                nextInd.classList.remove('text-gray-600');
             }
         }
 
         function nextPage() {
             if (currentPage < totalPages) {
                 currentPage++;
-                updateUI();
-            } else {
-                currentPage = 1;
                 updateUI();
             }
         }
@@ -439,7 +470,7 @@
             }
         }
 
-        // WhatsApp 自動跳轉 (零成本半自動方案)
+        // 半自動 WhatsApp 邏輯
         async function handleExcelRequest() {
             const btn = document.getElementById('cta-btn');
             const name = document.getElementById('cta-name').value;
@@ -454,10 +485,8 @@
             btn.innerHTML = "正在開啟 WhatsApp...";
             btn.disabled = true;
             
-            // 🛑 記得在這裡換上你的真實 WhatsApp 號碼 (要包含 852 區號)
+            // 🛑 記得換號碼
             const yourWhatsAppNumber = "85291234567"; 
-            
-            // 預設發給你的訊息
             const message = `Hi Klau，我是 ${name}，想領取 2025/26 扣稅懶人包！我的聯絡電話是 ${phone}。`;
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${yourWhatsAppNumber}?text=${encodedMessage}`;
@@ -469,85 +498,119 @@
             }, 800);
         }
 
-        // 專業版稅務計算邏輯
+        // 專業版計算邏輯
         function calculateProTax() {
             const income = parseFloat(document.getElementById('income').value) || 0;
             const isMarried = document.getElementById('maritalStatus').value === 'married';
             const isSingleParent = document.getElementById('singleParent').value === '1';
             
             let totalAllowance = isMarried ? 264000 : 132000;
-            
-            if (isSingleParent && !isMarried) {
-                totalAllowance += 132000; 
-            }
+            if (isSingleParent && !isMarried) totalAllowance += 132000; 
 
             const childCount = parseInt(document.getElementById('childCount').value) || 0;
             const newbornCount = parseInt(document.getElementById('newbornCount').value) || 0;
-            totalAllowance += (childCount * 130000);
-            totalAllowance += (newbornCount * 130000); 
+            totalAllowance += (childCount * 130000) + (newbornCount * 130000); 
 
             const p60T = parseInt(document.getElementById('p60T').value) || 0;
             const p60N = parseInt(document.getElementById('p60N').value) || 0;
             const p55T = parseInt(document.getElementById('p55T').value) || 0;
             const p55N = parseInt(document.getElementById('p55N').value) || 0;
             
-            totalAllowance += (p60T * 100000); 
-            totalAllowance += (p60N * 50000);
-            totalAllowance += (p55T * 50000);  
-            totalAllowance += (p55N * 25000);
+            totalAllowance += (p60T * 100000) + (p60N * 50000) + (p55T * 50000) + (p55N * 25000);
 
             const mpf = Math.min(parseFloat(document.getElementById('mpf').value) || 0, 18000); 
             const qdap = Math.min(parseFloat(document.getElementById('qdap').value) || 0, 60000);
             const vhis = parseFloat(document.getElementById('vhis').value) || 0; 
             const housing = Math.min(parseFloat(document.getElementById('housing').value) || 0, 100000);
-            const education = Math.min(parseFloat(document.getElementById('education').value) || 0, 100000);
 
-            const totalDeductions = mpf + qdap + vhis + housing + education;
+            const totalDeductions = mpf + qdap + vhis + housing;
 
             let nci = income - totalAllowance - totalDeductions;
             if (nci < 0) nci = 0;
 
             let progTax = 0;
-            if (nci > 200000) {
-                progTax = 16000 + (nci - 200000) * 0.17; 
-            } else if (nci > 150000) {
-                progTax = 9000 + (nci - 150000) * 0.14;
-            } else if (nci > 100000) {
-                progTax = 4000 + (nci - 100000) * 0.10;
-            } else if (nci > 50000) {
-                progTax = 1000 + (nci - 50000) * 0.06;
-            } else if (nci > 0) {
-                progTax = nci * 0.02;
-            }
+            if (nci > 200000) progTax = 16000 + (nci - 200000) * 0.17; 
+            else if (nci > 150000) progTax = 9000 + (nci - 150000) * 0.14;
+            else if (nci > 100000) progTax = 4000 + (nci - 100000) * 0.10;
+            else if (nci > 50000) progTax = 1000 + (nci - 50000) * 0.06;
+            else if (nci > 0) progTax = nci * 0.02;
 
             const netIncome = Math.max(0, income - totalDeductions); 
-            let stdTax = 0;
-            if (netIncome <= 5000000) {
-                stdTax = netIncome * 0.15;
-            } else {
-                stdTax = (5000000 * 0.15) + ((netIncome - 5000000) * 0.16); 
-            }
+            let stdTax = netIncome <= 5000000 ? netIncome * 0.15 : (5000000 * 0.15) + ((netIncome - 5000000) * 0.16); 
 
-            let isStandardRate = stdTax < progTax;
-            let finalTaxBeforeRelief = isStandardRate ? stdTax : progTax;
-
+            let finalTaxBeforeRelief = Math.min(stdTax, progTax);
             let finalTax = Math.max(0, finalTaxBeforeRelief - 3000);
+            
+            latestTaxData = { income, isMarried, qdap, vhis, housing, finalTax };
 
             const resultBox = document.getElementById('result-box');
-            resultBox.classList.remove('hidden', 'animate-pulse');
-            void resultBox.offsetWidth; 
-            resultBox.classList.add('animate-pulse');
+            resultBox.classList.remove('hidden');
+            
+            // 加入淡入動畫
+            resultBox.style.opacity = '0';
+            setTimeout(() => {
+                resultBox.style.transition = 'opacity 0.5s ease';
+                resultBox.style.opacity = '1';
+            }, 10);
 
             document.getElementById('tax-result').innerText = `$${Math.round(finalTax).toLocaleString()}`;
             document.getElementById('total-allowance-val').innerText = `$${totalAllowance.toLocaleString()}`;
             document.getElementById('total-deduction-val').innerText = `$${totalDeductions.toLocaleString()}`;
-            document.getElementById('nci-val').innerText = `$${Math.round(nci).toLocaleString()}`;
             
-            const methodDisplay = document.getElementById('tax-method');
-            if (isStandardRate) {
-                methodDisplay.innerHTML = `⚠️ <span class="text-orange-400">高薪人士：已採用「兩級制標準稅率」計算</span>`;
-            } else {
-                methodDisplay.innerHTML = `<span class="font-bold">採用累進稅率計算</span> <span class="italic text-[8px] bg-blue-800/50 px-1 rounded">已扣減 $3k 寬免</span>`;
+            // 顯示 AI 分析按鈕
+            document.getElementById('ai-tips-container').classList.remove('hidden');
+            document.getElementById('ai-result-box').classList.add('hidden');
+            document.getElementById('ai-btn').innerHTML = "✨ 顯示隱藏慳稅位";
+            document.getElementById('ai-btn').disabled = false;
+        }
+
+        // Gemini AI 分析
+        async function generateAITips() {
+            if (!latestTaxData) return;
+            
+            const btn = document.getElementById('ai-btn');
+            const resultBox = document.getElementById('ai-result-box');
+            const textBox = document.getElementById('ai-text');
+            
+            btn.innerHTML = "✨ 分析中... / ANALYZING...";
+            btn.disabled = true;
+            
+            const promptText = `你係一個香港專業理財顧問。客戶年薪：$${latestTaxData.income}，目前要交稅：$${latestTaxData.finalTax}。佢目前填嘅扣稅額：TVC/年金 $${latestTaxData.qdap}, 自願醫保 $${latestTaxData.vhis}。請用「廣東話口語」寫一段約 80 字嘅短評，如果未用盡 TVC ($60,000) 或 VHIS ($8,000) 就提下佢。結尾講：「快啲喺下一頁留低 WhatsApp，等我 send 個懶人包畀你參考啦！」唔好用 markdown 標題。`;
+
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: "You are a helpful Hong Kong financial advisor assistant." }] }
+            };
+
+            let retries = 0;
+            const delays = [1000, 2000, 4000];
+            let success = false;
+
+            while (retries < 3 && !success) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) throw new Error('API Error');
+                    
+                    const data = await response.json();
+                    textBox.innerText = data.candidates?.[0]?.content?.parts?.[0]?.text || "分析未能完成，請稍後再試。";
+                    resultBox.classList.remove('hidden');
+                    btn.innerHTML = "✨ 分析完成";
+                    success = true;
+                } catch (error) {
+                    retries++;
+                    if (retries >= 3) {
+                        textBox.innerText = "系統繁忙。不過唔緊要，你可以直接去下一頁領取懶人包了解更多！";
+                        resultBox.classList.remove('hidden');
+                        btn.innerHTML = "✨ 分析未能完成";
+                    } else {
+                        await new Promise(r => setTimeout(r, delays[retries-1]));
+                    }
+                }
             }
         }
     </script>

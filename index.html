@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>稅務地圖 - 2026/27 最新版</title>
+    <title>稅務地圖 - 2025/26 年度</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -76,14 +76,21 @@
             animation: pulse-blue 2s infinite ease-in-out;
         }
         .new-badge {
-            background: linear-gradient(90deg, #ff6b00, #ff9e00);
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
             padding: 2px 8px;
             border-radius: 2px;
             font-size: 10px;
             font-weight: 900;
-            color: black;
+            color: white;
             text-transform: uppercase;
             margin-left: 8px;
+        }
+        /* 隱藏原生 details 的箭頭 */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
         }
     </style>
 </head>
@@ -113,10 +120,10 @@
             <div class="p-8 md:p-12 min-h-[680px] flex flex-col justify-between relative z-10">
                 
                 <div id="content-area">
-                    <!-- Page 01: Cover (TAX MAP 2026/27) -->
+                    <!-- Page 01: Cover -->
                     <div id="page-01" class="block">
                         <header class="mt-12 relative">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.5em] mb-4">2026/27 BUDGET版</p>
+                            <p class="text-xs font-black italic accent-orange tracking-[0.5em] mb-4">2025/26 課稅年度</p>
                             
                             <div class="relative inline-block">
                                 <h1 class="text-7xl font-black italic tracking-tighter leading-[0.8] uppercase relative z-10">
@@ -132,13 +139,13 @@
                             
                             <h2 class="text-4xl font-black italic tracking-tighter mt-2 flex items-center gap-2">
                                 稅務地圖<span class="accent-orange">.</span>
-                                <span class="new-badge">UPDATED</span>
+                                <span class="new-badge">CURRENT</span>
                             </h2>
 
                             <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-600/10 blur-[60px] rounded-full pointer-events-none"></div>
                             
                             <p class="mt-12 text-sm font-bold tracking-widest text-gray-custom uppercase border-l-2 border-orange-500 pl-4">
-                                2026/27 預算案導航：<br>全面對接最新免稅額調升
+                                現行年度導航：<br>全面掌握免稅額及扣稅攻略
                             </p>
                         </header>
                         <div class="mt-16">
@@ -146,28 +153,28 @@
                         </div>
                     </div>
 
-                    <!-- Page 02: Updated Allowances (2026/27 Values) -->
+                    <!-- Page 02: Allowances -->
                     <div id="page-02" class="hidden text-left">
                         <header class="mb-8">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">02 / NEW ALLOWANCES</p>
-                            <h1 class="text-5xl font-black italic tracking-tighter">最新免稅地圖<span class="accent-orange">.</span></h1>
+                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">02 / ALLOWANCES</p>
+                            <h1 class="text-5xl font-black italic tracking-tighter">免稅額地圖<span class="accent-orange">.</span></h1>
                         </header>
 
                         <div class="space-y-6">
                             <div>
-                                <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 border-b border-orange-900/50 pb-1">2026/27 免稅額調升一覽</p>
+                                <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 border-b border-orange-900/50 pb-1">現行免稅額一覽</p>
                                 <div class="grid grid-cols-1 gap-4">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm font-black italic">基本免稅額 <span class="new-badge ml-0">NEW</span></span>
-                                        <span class="text-lg font-black">$145,000</span>
+                                        <span class="text-sm font-black italic">基本免稅額</span>
+                                        <span class="text-lg font-black">$132,000</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm font-black italic">子女免稅額 <span class="new-badge ml-0">NEW</span></span>
-                                        <span class="text-lg font-black">$140,000</span>
+                                        <span class="text-sm font-black italic">子女免稅額</span>
+                                        <span class="text-lg font-black">$130,000</span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm font-black italic">父母同住 (60+) <span class="new-badge ml-0">NEW</span></span>
-                                        <span class="text-lg font-black">$110,000</span>
+                                        <span class="text-sm font-black italic">父母同住 (60+)</span>
+                                        <span class="text-lg font-black">$100,000</span>
                                     </div>
                                 </div>
                             </div>
@@ -176,8 +183,8 @@
                                 <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 border-b border-orange-900/50 pb-1">Deductions 扣除額</p>
                                 <div class="grid grid-cols-1 gap-4">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-sm font-black italic">長者住宿照顧扣除 <span class="new-badge ml-0">UP</span></span>
-                                        <span class="text-lg font-black">$110,000</span>
+                                        <span class="text-sm font-black italic">居所貸款 / 住宅租金扣除</span>
+                                        <span class="text-lg font-black">$100,000</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm font-black italic text-gray-300">自願醫保 (VHIS)</span>
@@ -192,147 +199,171 @@
                         </div>
                     </div>
 
-                    <!-- Page 03: Brackets -->
+                    <!-- Page 03: PRO Calculator -->
                     <div id="page-03" class="hidden">
-                        <header class="mb-8">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">03 / THE SYSTEM</p>
-                            <h1 class="text-5xl font-black italic tracking-tighter">累進稅階系統<span class="accent-orange">.</span></h1>
-                        </header>
-
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center bg-white/5 p-3 rounded-sm border-b border-gray-800">
-                                <div class="text-[11px] font-bold uppercase tracking-widest text-gray-400">首個 $50,000</div>
-                                <div class="text-xl font-black italic accent-orange">2%</div>
-                            </div>
-                            <div class="flex justify-between items-center bg-white/5 p-3 rounded-sm border-b border-gray-800">
-                                <div class="text-[11px] font-bold uppercase tracking-widest text-gray-400">次個 $50,000</div>
-                                <div class="text-xl font-black italic accent-orange">6%</div>
-                            </div>
-                            <div class="flex justify-between items-center bg-white/5 p-3 rounded-sm border-b border-gray-800">
-                                <div class="text-[11px] font-bold uppercase tracking-widest text-gray-400">第 3 個 $50,000</div>
-                                <div class="text-xl font-black italic accent-orange">10%</div>
-                            </div>
-                            <div class="flex justify-between items-center bg-white/5 p-3 rounded-sm border-b border-gray-800">
-                                <div class="text-[11px] font-bold uppercase tracking-widest text-gray-400">第 4 個 $50,000</div>
-                                <div class="text-xl font-black italic accent-orange">14%</div>
-                            </div>
-                            <div class="flex justify-between items-center bg-white/10 p-3 rounded-sm border-l-4 border-orange-500">
-                                <div class="text-[11px] font-bold uppercase tracking-widest text-white">餘額</div>
-                                <div class="text-xl font-black italic text-white">17%</div>
-                            </div>
-                        </div>
-                        <div class="mt-6 bg-blue-900/20 p-3 rounded border border-blue-500/30">
-                             <p class="text-[10px] font-black accent-blue uppercase tracking-widest">2025/26 寬減提示</p>
-                             <p class="text-xs text-gray-300 mt-1 italic">預算案建議寬減 100% 稅款，上限調升至 <span class="text-white font-black">$3,000</span>。</p>
-                        </div>
-                    </div>
-
-                    <!-- Page 04: Calculator (Updated for 2026/27) -->
-                    <div id="page-04" class="hidden">
-                        <header class="mb-4">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-1">04 / THE ENGINE</p>
-                            <h1 class="text-4xl font-black italic tracking-tighter">最新預算案計算機<span class="accent-orange">.</span></h1>
-                        </header>
-                        <div class="space-y-4 max-h-[440px] overflow-y-auto pr-2 custom-scroll">
+                        <header class="mb-4 flex justify-between items-end">
                             <div>
-                                <label class="text-[10px] font-bold text-gray-custom tracking-widest uppercase">Annual Income 年入息</label>
-                                <input type="number" id="income" placeholder="例如: 600000" class="w-full bg-white/5 border border-gray-700 p-2 rounded-sm text-lg font-black focus:border-orange-500 transition-colors outline-none">
+                                <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-1">03 / PRO ENGINE</p>
+                                <h1 class="text-4xl font-black italic tracking-tighter">專業稅務計算機<span class="accent-orange">.</span></h1>
                             </div>
-
-                            <div class="p-3 bg-white/5 border border-gray-800 rounded-sm">
-                                <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 underline">新制免稅額 (2026/27 起適用)</p>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">子女數目 (每名$140k)</label>
-                                        <select id="childCount" class="w-full bg-black/40 border border-gray-700 p-2 rounded-sm font-bold text-sm focus:border-orange-500 outline-none text-white">
-                                            <option value="0">無</option>
-                                            <option value="1">1 名</option>
-                                            <option value="2">2 名</option>
-                                            <option value="3">3 名</option>
-                                            <option value="4">4 名+</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">父母同住 (每名$110k)</label>
-                                        <select id="parentCount" class="w-full bg-black/40 border border-gray-700 p-2 rounded-sm font-bold text-sm focus:border-orange-500 outline-none text-white">
-                                            <option value="0">無</option>
-                                            <option value="1">1 名</option>
-                                            <option value="2">2 名</option>
-                                            <option value="3">3 名</option>
-                                            <option value="4">4 名+</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="p-3 bg-white/5 border border-gray-800 rounded-sm">
-                                <p class="text-[10px] font-bold accent-orange tracking-widest uppercase mb-3 underline">扣稅及保險項目</p>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">強積金 (MPF)</label>
-                                        <input type="number" id="mpf" value="18000" class="w-32 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">自願醫保 (VHIS)</label>
-                                        <input type="number" id="vhis" placeholder="上限 8000" class="w-32 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <label class="text-[10px] font-bold text-gray-custom uppercase">年金 / TVC</label>
-                                        <input type="number" id="qdap" placeholder="上限 60000" class="w-32 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button onclick="calculateTax()" class="w-full bg-accent-orange py-3 font-black italic text-lg hover:bg-orange-600 transition-all uppercase tracking-tighter">應用新制計算</button>
+                        </header>
+                        
+                        <!-- 計算機主體，加入滾動條適應多個輸入 -->
+                        <div class="space-y-3 max-h-[460px] overflow-y-auto pr-2 custom-scroll pb-4">
                             
-                            <div id="result-box" class="mt-4 p-4 bg-white/10 border border-orange-500/30 rounded-sm hidden animate-pulse">
-                                <p class="text-[10px] font-bold text-gray-custom tracking-widest uppercase">Estimated Tax 估計應繳稅款</p>
-                                <p id="tax-result" class="text-4xl font-black accent-orange italic">$0</p>
-                                <div class="mt-3 grid grid-cols-2 gap-2 border-t border-gray-800 pt-3">
-                                    <div>
-                                        <p class="text-[9px] font-bold text-gray-500 uppercase">新制總免稅額</p>
-                                        <p id="total-allowance-val" class="text-sm font-black">$0</p>
+                            <!-- 1. 基本資料 -->
+                            <div class="p-3 bg-white/5 border border-gray-700 rounded-sm">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="col-span-2">
+                                        <label class="text-[10px] font-bold text-gray-custom tracking-widest uppercase mb-1 block">Annual Income 總年薪/入息</label>
+                                        <input type="number" id="income" placeholder="例如: 600000" class="w-full bg-black/40 border border-gray-600 p-2 rounded-sm text-lg font-black focus:border-orange-500 transition-colors outline-none text-white">
                                     </div>
                                     <div>
-                                        <p class="text-[9px] font-bold text-gray-500 uppercase">新制總扣除額</p>
-                                        <p id="total-deduction-val" class="text-sm font-black">$0</p>
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase mb-1 block">婚姻狀況</label>
+                                        <select id="maritalStatus" class="w-full bg-black/40 border border-gray-600 p-2 rounded-sm font-bold text-xs focus:border-orange-500 outline-none text-white">
+                                            <option value="single">單身 / 未婚</option>
+                                            <option value="married">已婚 (合併計算)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase mb-1 block">單親免稅額</label>
+                                        <select id="singleParent" class="w-full bg-black/40 border border-gray-600 p-2 rounded-sm font-bold text-xs focus:border-orange-500 outline-none text-white">
+                                            <option value="0">否</option>
+                                            <option value="1">是 (需撫養子女)</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <p class="text-[9px] text-gray-500 mt-2 italic font-black uppercase text-center">🎉 已自動扣減最新 $3,000 寬免額</p>
+                            </div>
+
+                            <!-- 2. 家庭成員免稅額 (摺疊選單) -->
+                            <details class="group bg-white/5 border border-gray-800 rounded-sm">
+                                <summary class="p-3 cursor-pointer flex justify-between items-center font-bold text-xs accent-orange uppercase tracking-widest outline-none">
+                                    ▼ 進階免稅額 (子女及父母)
+                                    <span class="text-[10px] text-gray-500 group-open:hidden">點擊展開</span>
+                                </summary>
+                                <div class="p-3 pt-0 border-t border-gray-800 mt-2 space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">子女數目 ($130k)</label>
+                                            <input type="number" id="childCount" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">今年出生嬰兒 (額外$130k)</label>
+                                            <input type="number" id="newbornCount" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 60歲+ (同住 $100k)</label>
+                                            <input type="number" id="p60T" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 60歲+ (非同住 $50k)</label>
+                                            <input type="number" id="p60N" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 55-59歲 (同住 $50k)</label>
+                                            <input type="number" id="p55T" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">父母 55-59歲 (非同住 $25k)</label>
+                                            <input type="number" id="p55N" value="0" min="0" class="w-full bg-black/40 border border-gray-700 p-1.5 rounded-sm font-bold text-sm outline-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- 3. 扣除額 (摺疊選單) -->
+                            <details class="group bg-white/5 border border-gray-800 rounded-sm" open>
+                                <summary class="p-3 cursor-pointer flex justify-between items-center font-bold text-xs accent-orange uppercase tracking-widest outline-none">
+                                    ▼ 扣稅項目 (保險、房屋、強積金)
+                                </summary>
+                                <div class="p-3 pt-0 border-t border-gray-800 mt-2 space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">強積金 MPF (上限18k)</label>
+                                        <input type="number" id="mpf" value="18000" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">合資格延期年金 / TVC</label>
+                                        <input type="number" id="qdap" placeholder="上限 60k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">自願醫保 VHIS (總保費)</label>
+                                        <input type="number" id="vhis" placeholder="每名親屬上限 8k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">住宅租金 / 樓宇按揭利息</label>
+                                        <input type="number" id="housing" placeholder="上限 100k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <label class="text-[10px] font-bold text-gray-custom uppercase">個人進修開支</label>
+                                        <input type="number" id="education" placeholder="上限 100k" class="w-28 bg-black/40 border border-gray-700 p-1 rounded-sm text-right font-bold text-sm focus:border-orange-500 outline-none">
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- 計算按鈕 -->
+                            <button onclick="calculateProTax()" class="w-full bg-accent-orange py-3 mt-2 font-black italic text-lg hover:bg-orange-600 transition-all uppercase tracking-tighter shadow-lg shadow-orange-500/20">開始專業運算</button>
+                            
+                            <!-- 結果展示 -->
+                            <div id="result-box" class="mt-4 p-4 bg-gradient-to-br from-white/10 to-transparent border border-orange-500/40 rounded-sm hidden animate-pulse relative overflow-hidden">
+                                <div class="absolute top-0 right-0 p-2 opacity-10">
+                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                                </div>
+                                
+                                <p class="text-[10px] font-bold text-gray-300 tracking-widest uppercase mb-1">Final Tax Payable 應繳稅款總額</p>
+                                <p id="tax-result" class="text-5xl font-black accent-orange italic drop-shadow-md">$0</p>
+                                
+                                <div class="mt-4 grid grid-cols-2 gap-3 border-t border-gray-700 pt-3">
+                                    <div>
+                                        <p class="text-[9px] font-bold text-gray-500 uppercase">總免稅額</p>
+                                        <p id="total-allowance-val" class="text-sm font-black text-gray-200">$0</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] font-bold text-gray-500 uppercase">總扣除額</p>
+                                        <p id="total-deduction-val" class="text-sm font-black text-gray-200">$0</p>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <p class="text-[9px] font-bold text-gray-500 uppercase">應課稅入息實額 (Net Chargeable Income)</p>
+                                        <p id="nci-val" class="text-sm font-black text-gray-200">$0</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 bg-blue-900/30 border border-blue-500/30 p-2 rounded text-[9px] text-blue-200 flex items-center justify-between">
+                                    <span id="tax-method" class="font-bold">採用累進稅率計算</span>
+                                    <span class="italic">已扣減 $3,000 寬免額</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Page 05: Call to Action -->
-                    <div id="page-05" class="hidden">
+                    <!-- Page 04: Call to Action -->
+                    <div id="page-04" class="hidden">
                         <header class="mb-6">
-                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">05 / THE DESTINATION</p>
-                            <h1 class="text-5xl font-black italic tracking-tighter leading-tight">領取 2026 工具<span class="accent-orange">.</span></h1>
+                            <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-2">04 / THE DESTINATION</p>
+                            <h1 class="text-5xl font-black italic tracking-tighter leading-tight">領取懶人包<span class="accent-orange">.</span></h1>
                         </header>
 
                         <div class="space-y-6">
                             <div class="bg-accent-blue/10 p-4 border-l-4 border-accent-blue rounded-sm">
-                                <p class="text-sm font-bold italic text-white mb-2 underline decoration-blue-500 underline-offset-4">2026/27 專業稅務優化 Excel</p>
+                                <p class="text-sm font-bold italic text-white mb-2 underline decoration-blue-500 underline-offset-4">2025/26 扣稅懶人包</p>
                                 <p class="text-xs text-gray-300 leading-relaxed">
-                                    配合最新預算案政策，我們已更新全自動 Excel 規劃表。幫助你利用免稅額調升，規劃出「零稅金」策略。
+                                    想知道如何善用各項扣稅額（如合資格延期年金 QDAP、自願醫保 VHIS 等）？留下 WhatsApp，系統會即時發送「2025/26 扣稅懶人包」給你參考，助你輕鬆了解各項扣稅細節！
                                 </p>
                             </div>
 
-                            <div class="space-y-4 mt-8">
+                            <div class="space-y-3 mt-8">
                                 <div class="relative">
                                     <input type="text" id="cta-name" placeholder="你的姓名 / Name" class="w-full bg-white/5 border border-gray-700 p-3 rounded-sm text-sm font-bold focus:border-blue-500 outline-none transition-all">
                                 </div>
                                 <div class="relative">
-                                    <input type="email" id="cta-email" placeholder="電郵地址 / Email Address" class="w-full bg-white/5 border border-gray-700 p-3 rounded-sm text-sm font-bold focus:border-blue-500 outline-none transition-all">
+                                    <input type="tel" id="cta-phone" placeholder="WhatsApp 號碼 (例: 91234567)" class="w-full bg-white/5 border border-gray-700 p-3 rounded-sm text-sm font-bold focus:border-green-500 outline-none transition-all">
                                 </div>
                                 
-                                <button onclick="handleExcelRequest()" id="cta-btn" class="w-full bg-accent-blue py-4 font-black italic text-lg hover:bg-blue-600 transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] uppercase tracking-tighter flex items-center justify-center gap-3">
+                                <button onclick="handleExcelRequest()" id="cta-btn" class="w-full bg-accent-blue py-4 mt-2 font-black italic text-lg hover:bg-blue-600 transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] uppercase tracking-tighter flex items-center justify-center gap-3">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                    領取 2026 最新版 Excel
+                                    立刻領取懶人包
                                 </button>
                                 
-                                <p class="text-[9px] text-center text-gray-500 uppercase tracking-widest mt-4 italic">
-                                    * 您的資料僅用於發送 Excel 及 24 小時內之預算案專業諮詢。
+                                <p class="text-[9px] text-center text-gray-500 uppercase tracking-widest mt-4 italic leading-relaxed">
+                                    * 您的資料絕對保密，僅用於發送懶人包及相關資訊。<br>本人為理財顧問，本專頁內容絕不構成專業稅務建議。
                                 </p>
                             </div>
                         </div>
@@ -342,7 +373,7 @@
                 <!-- Footer -->
                 <footer class="mt-8 pt-8 border-t border-gray-custom flex justify-between items-center bg-white/5 -mx-8 -mb-8 p-8 md:-mx-12 md:-mb-12 md:p-12">
                     <div>
-                        <p class="text-[10px] font-black tracking-[0.2em] italic uppercase">Tax Map 2026/27</p>
+                        <p class="text-[10px] font-black tracking-[0.2em] italic uppercase">Tax Map 2025/26</p>
                         <p class="text-[10px] font-bold text-gray-custom tracking-widest uppercase">Authored by Klau</p>
                     </div>
                     <div class="text-3xl font-black italic" id="page-number">01</div>
@@ -354,7 +385,7 @@
 
     <script>
         let currentPage = 1;
-        const totalPages = 5;
+        const totalPages = 4;
 
         function updateUI() {
             for (let i = 1; i <= totalPages; i++) {
@@ -405,67 +436,129 @@
             }
         }
 
-        function handleExcelRequest() {
+        async function handleExcelRequest() {
             const btn = document.getElementById('cta-btn');
             const name = document.getElementById('cta-name').value;
-            if(!name) {
-                btn.innerHTML = "請輸入姓名以領取";
-                setTimeout(() => btn.innerHTML = "領取 2026 最新版 Excel", 2000);
+            const phone = document.getElementById('cta-phone').value;
+            
+            if(!name || !phone) {
+                btn.innerHTML = "請填寫姓名及電話！";
+                setTimeout(() => btn.innerHTML = "立刻領取懶人包", 2000);
                 return;
             }
+
             btn.innerHTML = "處理中... / PROCESSING...";
             btn.disabled = true;
             
-            setTimeout(() => {
-                btn.innerHTML = "已預約！Excel 將發送至您的電郵";
+            try {
+                // 🛑 請換上你的 Webhook URL
+                const webhookUrl = 'https://hook.us1.make.com/你的專屬代碼'; 
+                
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, phone: phone, source: 'IG_Tax_Map_Pro_Agent' })
+                });
+
+                btn.innerHTML = "成功！稍後將透過 WhatsApp 發送懶人包";
                 btn.classList.replace('bg-accent-blue', 'bg-green-600');
-            }, 1500);
+            } catch (error) {
+                console.error("Webhook Error:", error);
+                btn.innerHTML = "發生錯誤，請重試 / ERROR";
+                btn.disabled = false;
+                setTimeout(() => btn.innerHTML = "立刻領取懶人包", 3000);
+            }
         }
 
-        function calculateTax() {
+        // 全新：專業版稅務計算邏輯
+        function calculateProTax() {
             const income = parseFloat(document.getElementById('income').value) || 0;
-            const childCount = parseInt(document.getElementById('childCount').value) || 0;
-            const parentCount = parseInt(document.getElementById('parentCount').value) || 0;
-            const mpf = parseFloat(document.getElementById('mpf').value) || 0;
+            const isMarried = document.getElementById('maritalStatus').value === 'married';
+            const isSingleParent = document.getElementById('singleParent').value === '1';
             
-            // 2026/27 Updated Values
-            const basicAllowance = 145000; // Increased from 132k
-            const childAllowance = childCount * 140000; // Increased from 130k
-            const parentAllowance = parentCount * 110000; // 55k + 55k increased from 100k
+            // 1. 計算總免稅額 (Allowances)
+            let totalAllowance = isMarried ? 264000 : 132000; // 基本/已婚人士免稅額
             
-            const totalAllowance = basicAllowance + childAllowance + parentAllowance;
-
-            let vhis = parseFloat(document.getElementById('vhis').value) || 0;
-            if (vhis > 8000) vhis = 8000;
-            let qdap_tvc = parseFloat(document.getElementById('qdap').value) || 0;
-            if (qdap_tvc > 60000) qdap_tvc = 60000;
-
-            const totalDeductions = mpf + vhis + qdap_tvc;
-            
-            let taxable = income - totalAllowance - totalDeductions;
-            if (taxable < 0) taxable = 0;
-
-            let tax = 0;
-            if (taxable > 0) {
-                if (taxable <= 50000) tax = taxable * 0.02;
-                else if (taxable <= 100000) tax = 1000 + (taxable - 50000) * 0.06;
-                else if (taxable <= 150000) tax = 1000 + 3000 + (taxable - 100000) * 0.10;
-                else if (taxable <= 200000) tax = 1000 + 3000 + 5000 + (taxable - 150000) * 0.14;
-                else tax = 1000 + 3000 + 5000 + 7000 + (taxable - 200000) * 0.17;
+            if (isSingleParent && !isMarried) {
+                totalAllowance += 132000; // 單親免稅額
             }
 
-            // Apply NEW $3,000 one-off relief (Updated from $1,500)
-            tax = Math.max(0, tax - 3000);
+            const childCount = parseInt(document.getElementById('childCount').value) || 0;
+            const newbornCount = parseInt(document.getElementById('newbornCount').value) || 0;
+            totalAllowance += (childCount * 130000);
+            totalAllowance += (newbornCount * 130000); // 新生兒該年度額外 130k
 
+            const p60T = parseInt(document.getElementById('p60T').value) || 0;
+            const p60N = parseInt(document.getElementById('p60N').value) || 0;
+            const p55T = parseInt(document.getElementById('p55T').value) || 0;
+            const p55N = parseInt(document.getElementById('p55N').value) || 0;
+            
+            totalAllowance += (p60T * 100000); // 50k 基本 + 50k 額外同住
+            totalAllowance += (p60N * 50000);
+            totalAllowance += (p55T * 50000);  // 25k 基本 + 25k 額外同住
+            totalAllowance += (p55N * 25000);
+
+            // 2. 計算總扣除額 (Deductions)
+            // MPF 最高上限通常填 18000，這裡允許用家自訂但防呆極端數字
+            const mpf = Math.min(parseFloat(document.getElementById('mpf').value) || 0, 18000); 
+            const qdap = Math.min(parseFloat(document.getElementById('qdap').value) || 0, 60000);
+            const vhis = parseFloat(document.getElementById('vhis').value) || 0; // 假設用家填寫的是合資格總保費 (每名上限8k)
+            const housing = Math.min(parseFloat(document.getElementById('housing').value) || 0, 100000);
+            const education = Math.min(parseFloat(document.getElementById('education').value) || 0, 100000);
+
+            const totalDeductions = mpf + qdap + vhis + housing + education;
+
+            // 3. 應課稅入息實額 (Net Chargeable Income)
+            let nci = income - totalAllowance - totalDeductions;
+            if (nci < 0) nci = 0;
+
+            // 4. 累進稅率計算 (Progressive Rate)
+            let progTax = 0;
+            if (nci > 200000) {
+                progTax = 16000 + (nci - 200000) * 0.17; // 前 200k 稅款為 16000 (1k+3k+5k+7k)
+            } else if (nci > 150000) {
+                progTax = 9000 + (nci - 150000) * 0.14;
+            } else if (nci > 100000) {
+                progTax = 4000 + (nci - 100000) * 0.10;
+            } else if (nci > 50000) {
+                progTax = 1000 + (nci - 50000) * 0.06;
+            } else if (nci > 0) {
+                progTax = nci * 0.02;
+            }
+
+            // 5. 標準稅率計算 (Standard Rate) - 2025/26 實行兩級制
+            const netIncome = Math.max(0, income - totalDeductions); // 扣除額，但不減免稅額
+            let stdTax = 0;
+            if (netIncome <= 5000000) {
+                stdTax = netIncome * 0.15;
+            } else {
+                stdTax = (5000000 * 0.15) + ((netIncome - 5000000) * 0.16); // 首 500 萬 15%，餘額 16%
+            }
+
+            // 6. 決定採用何種稅率 (取較低者)
+            let isStandardRate = stdTax < progTax;
+            let finalTaxBeforeRelief = isStandardRate ? stdTax : progTax;
+
+            // 7. 扣減一次性寬減 ($3,000)
+            let finalTax = Math.max(0, finalTaxBeforeRelief - 3000);
+
+            // 8. 顯示結果
             const resultBox = document.getElementById('result-box');
-            resultBox.classList.remove('hidden');
-            resultBox.classList.remove('animate-pulse');
-            void resultBox.offsetWidth; 
+            resultBox.classList.remove('hidden', 'animate-pulse');
+            void resultBox.offsetWidth; // Trigger reflow
             resultBox.classList.add('animate-pulse');
 
-            document.getElementById('tax-result').innerText = `$${Math.round(tax).toLocaleString()}`;
+            document.getElementById('tax-result').innerText = `$${Math.round(finalTax).toLocaleString()}`;
             document.getElementById('total-allowance-val').innerText = `$${totalAllowance.toLocaleString()}`;
             document.getElementById('total-deduction-val').innerText = `$${totalDeductions.toLocaleString()}`;
+            document.getElementById('nci-val').innerText = `$${Math.round(nci).toLocaleString()}`;
+            
+            const methodDisplay = document.getElementById('tax-method');
+            if (isStandardRate) {
+                methodDisplay.innerHTML = `⚠️ <span class="text-orange-400">高薪人士：已採用「兩級制標準稅率」計算</span>`;
+            } else {
+                methodDisplay.innerHTML = `<span class="font-bold">採用累進稅率計算</span> <span class="italic text-[8px] bg-blue-800/50 px-1 rounded">已扣減 $3k 寬免</span>`;
+            }
         }
     </script>
 </body>

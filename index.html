@@ -9,10 +9,12 @@
     <style>
         body {
             font-family: 'Inter', "Microsoft JhengHei", sans-serif;
-            background-color: #f3f4f6;
+            /* 將原本的 #f3f4f6 (淺灰) 改為深灰色背景 */
+            background-color: #0a0a0a; 
         }
         .card-bg {
-            background-color: #1a1a1a;
+            /* 稍微調深卡片的背景，讓它與外圍背景有對比 */
+            background-color: #121212; 
             position: relative;
             overflow: hidden;
         }
@@ -106,14 +108,15 @@
         </div>
 
         <!-- Card Container -->
-        <div class="card-bg text-white rounded-sm shadow-2xl overflow-hidden page-transition border border-white/10">
+        <!-- 同時加強了卡片的陰影邊框，讓它在黑背景下更突出 -->
+        <div class="card-bg text-white rounded-sm shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden page-transition border border-white/5">
             
             <!-- Map Grid Effect -->
             <div id="grid-bg" class="map-grid"></div>
 
             <!-- Top Accent Bar -->
             <div class="h-1.5 w-full bg-gray-800 flex relative z-10">
-                <div id="progress-bar" class="h-full bg-accent-orange transition-all duration-500" style="width: 20%;"></div>
+                <div id="progress-bar" class="h-full bg-accent-orange transition-all duration-500" style="width: 25%;"></div>
             </div>
 
             <!-- Card Content -->
@@ -204,11 +207,11 @@
                         <header class="mb-4 flex justify-between items-end">
                             <div>
                                 <p class="text-xs font-black italic accent-orange tracking-[0.3em] mb-1">03 / PRO ENGINE</p>
-                                <h1 class="text-4xl font-black italic tracking-tighter">稅務計算機<span class="accent-orange">.</span></h1>
+                                <h1 class="text-4xl font-black italic tracking-tighter">專業稅務計算機<span class="accent-orange">.</span></h1>
                             </div>
                         </header>
                         
-                        <!-- 計算機主體，加入滾動條適應多個輸入 -->
+                        <!-- 計算機主體 -->
                         <div class="space-y-3 max-h-[460px] overflow-y-auto pr-2 custom-scroll pb-4">
                             
                             <!-- 1. 基本資料 -->
@@ -370,7 +373,7 @@
                     </div>
                 </div>
 
-                <!-- Footer -->
+                <!-- Footer (已收窄) -->
                 <footer class="mt-auto pt-5 border-t border-gray-custom flex justify-between items-center bg-white/5 -mx-8 -mb-8 px-8 py-4 md:-mx-12 md:-mb-12 md:px-12 md:py-5">
                     <div>
                         <p class="text-[10px] font-black tracking-[0.2em] italic uppercase">Tax Map 2025/26</p>
@@ -394,7 +397,7 @@
             document.getElementById(`page-0${currentPage}`).classList.remove('hidden');
             document.getElementById('page-number').innerText = `0${currentPage}`;
             
-            document.getElementById('grid-bg').style.opacity = (currentPage === 1 || currentPage === 5) ? '1' : '0.3';
+            document.getElementById('grid-bg').style.opacity = (currentPage === 1 || currentPage === 4) ? '1' : '0.3';
 
             const progress = (currentPage / totalPages) * 100;
             document.getElementById('progress-bar').style.width = `${progress}%`;
@@ -436,6 +439,7 @@
             }
         }
 
+        // WhatsApp 自動跳轉 (零成本半自動方案)
         async function handleExcelRequest() {
             const btn = document.getElementById('cta-btn');
             const name = document.getElementById('cta-name').value;
@@ -447,75 +451,65 @@
                 return;
             }
 
-            btn.innerHTML = "處理中... / PROCESSING...";
+            btn.innerHTML = "正在開啟 WhatsApp...";
             btn.disabled = true;
             
-            try {
-                // 🛑 請換上你的 Webhook URL
-                const webhookUrl = 'https://hook.us1.make.com/你的專屬代碼'; 
-                
-                await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: name, phone: phone, source: 'IG_Tax_Map_Pro_Agent' })
-                });
-
-                btn.innerHTML = "成功！稍後將透過 WhatsApp 發送懶人包";
+            // 🛑 記得在這裡換上你的真實 WhatsApp 號碼 (要包含 852 區號)
+            const yourWhatsAppNumber = "85291234567"; 
+            
+            // 預設發給你的訊息
+            const message = `Hi Klau，我是 ${name}，想領取 2025/26 扣稅懶人包！我的聯絡電話是 ${phone}。`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${yourWhatsAppNumber}?text=${encodedMessage}`;
+            
+            setTimeout(() => {
+                window.open(whatsappUrl, '_blank');
+                btn.innerHTML = "已轉跳至 WhatsApp！";
                 btn.classList.replace('bg-accent-blue', 'bg-green-600');
-            } catch (error) {
-                console.error("Webhook Error:", error);
-                btn.innerHTML = "發生錯誤，請重試 / ERROR";
-                btn.disabled = false;
-                setTimeout(() => btn.innerHTML = "立刻領取懶人包", 3000);
-            }
+            }, 800);
         }
 
-        // 全新：專業版稅務計算邏輯
+        // 專業版稅務計算邏輯
         function calculateProTax() {
             const income = parseFloat(document.getElementById('income').value) || 0;
             const isMarried = document.getElementById('maritalStatus').value === 'married';
             const isSingleParent = document.getElementById('singleParent').value === '1';
             
-            // 1. 計算總免稅額 (Allowances)
-            let totalAllowance = isMarried ? 264000 : 132000; // 基本/已婚人士免稅額
+            let totalAllowance = isMarried ? 264000 : 132000;
             
             if (isSingleParent && !isMarried) {
-                totalAllowance += 132000; // 單親免稅額
+                totalAllowance += 132000; 
             }
 
             const childCount = parseInt(document.getElementById('childCount').value) || 0;
             const newbornCount = parseInt(document.getElementById('newbornCount').value) || 0;
             totalAllowance += (childCount * 130000);
-            totalAllowance += (newbornCount * 130000); // 新生兒該年度額外 130k
+            totalAllowance += (newbornCount * 130000); 
 
             const p60T = parseInt(document.getElementById('p60T').value) || 0;
             const p60N = parseInt(document.getElementById('p60N').value) || 0;
             const p55T = parseInt(document.getElementById('p55T').value) || 0;
             const p55N = parseInt(document.getElementById('p55N').value) || 0;
             
-            totalAllowance += (p60T * 100000); // 50k 基本 + 50k 額外同住
+            totalAllowance += (p60T * 100000); 
             totalAllowance += (p60N * 50000);
-            totalAllowance += (p55T * 50000);  // 25k 基本 + 25k 額外同住
+            totalAllowance += (p55T * 50000);  
             totalAllowance += (p55N * 25000);
 
-            // 2. 計算總扣除額 (Deductions)
-            // MPF 最高上限通常填 18000，這裡允許用家自訂但防呆極端數字
             const mpf = Math.min(parseFloat(document.getElementById('mpf').value) || 0, 18000); 
             const qdap = Math.min(parseFloat(document.getElementById('qdap').value) || 0, 60000);
-            const vhis = parseFloat(document.getElementById('vhis').value) || 0; // 假設用家填寫的是合資格總保費 (每名上限8k)
+            const vhis = parseFloat(document.getElementById('vhis').value) || 0; 
             const housing = Math.min(parseFloat(document.getElementById('housing').value) || 0, 100000);
             const education = Math.min(parseFloat(document.getElementById('education').value) || 0, 100000);
 
             const totalDeductions = mpf + qdap + vhis + housing + education;
 
-            // 3. 應課稅入息實額 (Net Chargeable Income)
             let nci = income - totalAllowance - totalDeductions;
             if (nci < 0) nci = 0;
 
-            // 4. 累進稅率計算 (Progressive Rate)
             let progTax = 0;
             if (nci > 200000) {
-                progTax = 16000 + (nci - 200000) * 0.17; // 前 200k 稅款為 16000 (1k+3k+5k+7k)
+                progTax = 16000 + (nci - 200000) * 0.17; 
             } else if (nci > 150000) {
                 progTax = 9000 + (nci - 150000) * 0.14;
             } else if (nci > 100000) {
@@ -526,26 +520,22 @@
                 progTax = nci * 0.02;
             }
 
-            // 5. 標準稅率計算 (Standard Rate) - 2025/26 實行兩級制
-            const netIncome = Math.max(0, income - totalDeductions); // 扣除額，但不減免稅額
+            const netIncome = Math.max(0, income - totalDeductions); 
             let stdTax = 0;
             if (netIncome <= 5000000) {
                 stdTax = netIncome * 0.15;
             } else {
-                stdTax = (5000000 * 0.15) + ((netIncome - 5000000) * 0.16); // 首 500 萬 15%，餘額 16%
+                stdTax = (5000000 * 0.15) + ((netIncome - 5000000) * 0.16); 
             }
 
-            // 6. 決定採用何種稅率 (取較低者)
             let isStandardRate = stdTax < progTax;
             let finalTaxBeforeRelief = isStandardRate ? stdTax : progTax;
 
-            // 7. 扣減一次性寬減 ($3,000)
             let finalTax = Math.max(0, finalTaxBeforeRelief - 3000);
 
-            // 8. 顯示結果
             const resultBox = document.getElementById('result-box');
             resultBox.classList.remove('hidden', 'animate-pulse');
-            void resultBox.offsetWidth; // Trigger reflow
+            void resultBox.offsetWidth; 
             resultBox.classList.add('animate-pulse');
 
             document.getElementById('tax-result').innerText = `$${Math.round(finalTax).toLocaleString()}`;
